@@ -7,30 +7,30 @@
 #include  <stdlib.h>
 #include  <string.h>
 
-//±àÂëÏŞÖÆ(µ¥Î»£ºM)
+//ç¼–ç é™åˆ¶(å•ä½ï¼šM)
 #define FILE_MAX_SIZE 128
-//BASE64¼ÓÈ¨Ñ¹ËõĞĞ³¤(µ¥Î»£º×Ö½Ú)
+//BASE64åŠ æƒå‹ç¼©è¡Œé•¿(å•ä½ï¼šå­—èŠ‚)
 #define PRESS_LINE_SIZE 1000
-//ÉèÖÃ¹ıÂËÃô¸Ğ´ÊÊıÄ¿
+//è®¾ç½®è¿‡æ»¤æ•æ„Ÿè¯æ•°ç›®
 #define SENSITIVE_NUM 3
-//Ìí¼ÓÃô¸Ğ´ÊÌõÄ¿(ÇëÓÃĞ¡Ğ´¶¨Òå),¹ıÂËÊ±²»Çø·Ö´óĞ¡Ğ´¡£ 
+//æ·»åŠ æ•æ„Ÿè¯æ¡ç›®(è¯·ç”¨å°å†™å®šä¹‰),è¿‡æ»¤æ—¶ä¸åŒºåˆ†å¤§å°å†™ã€‚ 
 static const char* SENSITIVE_WORDS[]={"gcd", "flg", "taidu", "zangdu", "qingzhen", "fenlie", "dfj", "hsd", "xjzz"};
 
-//BSE±àÂë±í
+//BSEç¼–ç è¡¨
 static const unsigned char BASE64_CODE[64]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const unsigned char BASE92_CODE[256]={33,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static const char  HEX_CODE[16]="0123456789ABCDEF";
 static const char* BIN_CODE[16]={"0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
 static const char  BASE64_PRESS_CODE[10]="@-#$_}{][A";
-//BSE½âÂë±í
+//BSEè§£ç è¡¨
 static const unsigned char BASE64_DECO[80]={0x3E,0x40,0x40,0x40,0x3F,0x34,0x35,0x36,0x37,0x38,0x39,0x3A,0x3B,0x3C,0x3D,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x40,0x40,0x40,0x40,0x40,0x40,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0x2A,0x2B,0x2C,0x2D,0x2E,0x2F,0x30,0x31,0x32,0x33};
 static const unsigned char BASE92_DECO[256]={255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,0,255,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,255,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
 static const unsigned char HEX_DECO[23]={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F};
 
-//È«¾Ö±äÁ¿
+//å…¨å±€å˜é‡
 int i=0, j=0, FLAG=0, fsize=0;
 
-//Ãô¸Ğ´Ê¹ıÂË
+//æ•æ„Ÿè¯è¿‡æ»¤
 int Check_SensitiveWords(unsigned char* Str, int position)
 {
 	int  n, SN, MARK, L;
@@ -47,8 +47,8 @@ int Check_SensitiveWords(unsigned char* Str, int position)
 	return 0;
 }
  
-/***************±àÂëº¯ÊıÈº***************/
-//BASE64¼ÓÈ¨Ñ¹Ëõ
+/***************ç¼–ç å‡½æ•°ç¾¤***************/
+//BASE64åŠ æƒå‹ç¼©
 int Press_Base64(unsigned char* Str, int L, FILE* stream, char* file)
 {
 	int k, N, M, MARK;
@@ -83,11 +83,11 @@ int Press_Base64(unsigned char* Str, int L, FILE* stream, char* file)
 	fname=strtok(file, ".");
 	extension_name=strtok(NULL, ".");
 	if(FLAG==22){
-		//Éú³ÉÂÛÌ³×¨ÓÃÂë
+		//ç”Ÿæˆè®ºå›ä¸“ç”¨ç 
 		int N, MARK=j/64+1;
 		fprintf(stream
 		, 	"@echo off\r\n"
-			"::*********BASE64 ¹ıÂË½âÂëÆ÷*********\r\n"
+			"::*********BASE64 è¿‡æ»¤è§£ç å™¨*********\r\n"
 			"certutil -decode \"%%~f0\" %s.%s&pause&exit /b\r\n"
 			"::***********************************\r\n"
 		, 
@@ -100,12 +100,12 @@ int Press_Base64(unsigned char* Str, int L, FILE* stream, char* file)
 		return 0;
 
 	}
-	//Éú³É¼ÓÈ¨Ñ¹ËõÂë
+	//ç”ŸæˆåŠ æƒå‹ç¼©ç 
 	MARK=(int)(k/PRESS_LINE_SIZE+1);
 	fprintf(stream
 		, 	"@echo off\r\n"
 			"setlocal enabledelayedexpansion\r\n\r\n"
-			"::*********BASE64 ¼ÓÈ¨½âÂëÆ÷*********\r\n"
+			"::*********BASE64 åŠ æƒè§£ç å™¨*********\r\n"
 			"set $=set [#]&CALL :BASE64_PRESS&set [$]=A&((for %%%%Z in ([,],{,},_,$,#,-,@) do (set [$]=![$]!![$]!&for %%%%S in (![$]!) do (for /l %%%%i in (1,1,%d) do (!$!%%%%i=![#]%%%%i:%%%%Z=%%%%S!))))&for /l %%%%i in (1,1,%d) do (set/p=![#]%%%%i:.=!<NUL))>%s.BSEP&certutil -decode %s.BSEP %s.%s&pause&exit /b\r\n"
 			"::***********************************\r\n\r\n"
 			":BASE64_PRESS\r\n"
@@ -131,7 +131,7 @@ int Press_Base64(unsigned char* Str, int L, FILE* stream, char* file)
 	fprintf(stream, "\r\ngoto :EOF");
 	return 0;
 } 
-//BASE64±àÂë
+//BASE64ç¼–ç 
 int EncodeBase64(FILE* fp, FILE* stream, char* file)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(    fsize+3, sizeof(unsigned char));
@@ -147,13 +147,13 @@ int EncodeBase64(FILE* fp, FILE* stream, char* file)
 	if(i==fsize+1){              buf[j-1]='=';}
 	free(RAMread);
 	if(FLAG==20){
-		//Éú³É¼æÈİĞÔBASE64½âÂë½Å±¾
+		//ç”Ÿæˆå…¼å®¹æ€§BASE64è§£ç è„šæœ¬
 		int N, MARK=j/64+1;
 		char* fname=strtok(file, ".");
 		char* extension_name=strtok(NULL, ".");
 		fprintf(stream
 		, 	"@echo off\r\n"
-			"::*********BASE64 ±ê×¼½âÂëÆ÷*********\r\n"
+			"::*********BASE64 æ ‡å‡†è§£ç å™¨*********\r\n"
 			"certutil -decode \"%%~f0\" %s.%s&pause&exit /b\r\n"
 			"::***********************************\r\n"
 		, 
@@ -174,10 +174,10 @@ int EncodeBase64(FILE* fp, FILE* stream, char* file)
 		fprintf(stream, "\r\n-----END BASE64-----");
 		return 0;
 	}else if(FLAG==21){
-		//ÖÆ×÷¼ÓÈ¨Ñ¹ËõBASE64½âÂë½Å±¾
+		//åˆ¶ä½œåŠ æƒå‹ç¼©BASE64è§£ç è„šæœ¬
 		Press_Base64(buf, j, stream, file);
 	}else if(FLAG==22){
-		//ÖÆ×÷DISCUZÂÛÌ³×¨ÓÃ½âÂë½Å±¾
+		//åˆ¶ä½œDISCUZè®ºå›ä¸“ç”¨è§£ç è„šæœ¬
 		Press_Base64(buf, j, stream, file);
 	}else {
 		fwrite(buf, j, 1, stream);
@@ -185,7 +185,7 @@ int EncodeBase64(FILE* fp, FILE* stream, char* file)
 	free(buf);
 	return 0;
 }
-//BASE64#±àÂë
+//BASE64#ç¼–ç 
 int EncodeBase64_Tight(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(    fsize+3, sizeof(unsigned char));
@@ -204,7 +204,7 @@ int EncodeBase64_Tight(FILE* fp, FILE* stream)
 	free(buf);
 	return 0;
 }
-//BASE64+±àÂë
+//BASE64+ç¼–ç 
 int EncodeBase64_Plus(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(    fsize+3, sizeof(unsigned char));
@@ -226,7 +226,7 @@ int EncodeBase64_Plus(FILE* fp, FILE* stream)
 	free(buf);free(quotes);
 	return 0;
 }
-//BASEBIN±àÂë
+//BASEBINç¼–ç 
 int EncodeBin(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(  fsize+1, sizeof(unsigned char));
@@ -240,7 +240,7 @@ int EncodeBin(FILE* fp, FILE* stream)
 	free(RAMread);
 	return 0;
 }
-//BASEHEX±àÂë
+//BASEHEXç¼–ç 
 int EncodeHex(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(  fsize+1, sizeof(unsigned char));
@@ -255,7 +255,7 @@ int EncodeHex(FILE* fp, FILE* stream)
 	free(buf);
 	return 0;
 }
-//BASE92±àÂë
+//BASE92ç¼–ç 
 int Str_Encode(unsigned char* str, FILE* stream)
 {
 	unsigned int sizes;
@@ -332,8 +332,8 @@ int EncodeBase92(FILE* fp, FILE* stream)
 	return 0;
 }
 
-/***************½âÂëº¯ÊıÈº***************/
-//BASE64½âÂë
+/***************è§£ç å‡½æ•°ç¾¤***************/
+//BASE64è§£ç 
 int DecodeBase64(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(    fsize+2, sizeof(unsigned char));
@@ -351,7 +351,7 @@ int DecodeBase64(FILE* fp, FILE* stream)
 	free(buf);
 	return 0;
 }
-//BASE64#½âÂë
+//BASE64#è§£ç 
 int DecodeBase64_Tight(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(    fsize+2, sizeof(unsigned char));
@@ -371,7 +371,7 @@ int DecodeBase64_Tight(FILE* fp, FILE* stream)
 	free(buf);
 	return 0;
 }
-//BASE64+½âÂë
+//BASE64+è§£ç 
 int DecodeBase64_Plus(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(    fsize+3, sizeof(unsigned char));
@@ -392,7 +392,7 @@ int DecodeBase64_Plus(FILE* fp, FILE* stream)
 	free(buf);
 	return 0;
 }
-//BASEBIN½âÂë
+//BASEBINè§£ç 
 int DecodeBin(FILE* fp, FILE* stream)
 {
 	int M;
@@ -412,7 +412,7 @@ int DecodeBin(FILE* fp, FILE* stream)
 	free(RAMread);
 	return 0;
 }
-//BASEHEX½âÂë
+//BASEHEXè§£ç 
 int DecodeHex(FILE* fp, FILE* stream)
 {
 	unsigned char* RAMread=(unsigned char*)calloc(fsize+2  , sizeof(unsigned char));
@@ -426,7 +426,7 @@ int DecodeHex(FILE* fp, FILE* stream)
 	free(buf);
 	return 0;
 }
-//BASE92½âÂë
+//BASE92è§£ç 
 int Str_Decode(unsigned char* str, FILE* stream)
 {
 	int b1, b2, len;
@@ -477,12 +477,11 @@ int DecodeBase92(FILE* fp, FILE* stream)
 	free(RAMread);
 	return 0;
 }
-/***************¹¦ÄÜº¯ÊıÈº***************/
-//°ïÖúĞÅÏ¢
+/***************åŠŸèƒ½å‡½æ•°ç¾¤***************/
+//å¸®åŠ©ä¿¡æ¯
 void Help_Information(FILE* stream, int Exit_Code)
 {
 	fprintf(stream,
-		"COPYRIGHT@2016~2018 BY HAPPY, VERSION 1.1\n"
 		"--------------------------------------------------------------\n"
 		"bse [-e|-e#|-e+|-eb|-ex|-e92|\n"
 		"     -d|-d#|-d+|-db|-dx|-d92|\n"
@@ -505,12 +504,11 @@ void Help_Information(FILE* stream, int Exit_Code)
 		"    -mp   Make a press BASE64 batch\n"
 		"    -md   Make a discuz BASE64 batch\n"
 		"--------------------------------------------------------------\n"
-		"                                                   10/26/2016"
 	);
 	exit(Exit_Code);
 }
 
-/*************MAINÖ÷º¯ÊıÈë¿Ú*************/ 
+/*************MAINä¸»å‡½æ•°å…¥å£*************/ 
 int main(int argc, char** argv) 
 {
 	FILE* fp;FILE* op; char* delims;
@@ -551,20 +549,20 @@ int main(int argc, char** argv)
 	}else{
 		Help_Information(stderr, 3);
 	}
-	//¶ÁÎÄ¼şÁ÷
+	//è¯»æ–‡ä»¶æµ
 	if( (fp=fopen(argv[2], "rb"))==NULL ){
 		fputs("Failed to read file.", stdout);
 		return 2;
 	}
-	//²âÁ¿³ß´ç
+	//æµ‹é‡å°ºå¯¸
 	fseek(fp, 0, SEEK_END);
 	if( (fsize=ftell(fp))>FILE_MAX_SIZE*1024*1024 ){
 		fputs("File size is too large, out of memory.", stdout);
 		return 1;
 	}
-	//Ö¸Õë¸´Ô­
+	//æŒ‡é’ˆå¤åŸ
 	fseek(fp, 0, SEEK_SET);
-	//´ò¿ªÊä³öÎÄ¼şÁ÷ 
+	//æ‰“å¼€è¾“å‡ºæ–‡ä»¶æµ 
 	if( (op=fopen(argv[3], "wb"))==NULL ){
 		fputs("Failed to read file.", stdout);
 		return 1;
