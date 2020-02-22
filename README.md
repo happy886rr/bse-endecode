@@ -47,15 +47,15 @@ ________________________________________________________________________________
     -md   制作兼容 BASE64 过滤论坛特殊词脚本  
 __________________________________________________________________________________  
 示例：  
-     bse -e a.jpg a.base64         //将图片a.jpg编码为 BASE64  
-     bse -e# a.jpg a.base64#       //将图片a.jpg编码为 BASE64#  
-     bse -e92 a.jpg a.base92       //将图片a.jpg编码为 BASE92  
-     bse -d a.base64 a.jpg         //将a.base64 解编码为 a.jpg  
-     bse -d# a.base64# a.jpg       //将a.base64#解编码为 a.jpg  
-     bse -d92 a.base92 a.jpg       //将a.base92 解编码为 a.jpg  
-     bse -m a.jpg a.bat            //将图片编码为“标准BASE64编码”批处理  
-     bse -mp a.jpg a.bat           //将图片编码为“压缩BASE64加权”批处理  
-     bse -md a.jpg a.bat           //将图片编码为“过滤论坛特殊词”批处理  
+     bse -e a.jpg a.base64           //将图片a.jpg编码为 BASE64  
+     bse -e# a.jpg a.base64#         //将图片a.jpg编码为 BASE64#  
+     bse -e92 a.jpg a.base92         //将图片a.jpg编码为 BASE92  
+     bse -d a.base64 a.jpg           //将a.base64 解编码为 a.jpg  
+     bse -d# a.base64# a.jpg         //将a.base64#解编码为 a.jpg  
+     bse -d92 a.base92 a.jpg         //将a.base92 解编码为 a.jpg  
+     bse -m a.jpg a.bat              //将图片编码为“标准BASE64编码”批处理  
+     bse -mp a.jpg a.bat             //将图片编码为“压缩BASE64加权”批处理  
+     bse -md a.jpg a.bat             //将图片编码为“过滤论坛特殊词”批处理  
     ...  
 __________________________________________________________________________________  
 英译：  
